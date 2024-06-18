@@ -22,11 +22,11 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); //LiquidCrystal lcd(7, 6, 5, 4, 3, 2); // (r
 char t[32];
 
 
-const char *ssid = "AP";
-const char *password = "_!(SYs)/{fi5z}~_";
+const char *ssid = "STA";
+const char *password = "PASSWORD";
 
 
-//+5 hr 30 Mins Indian UTC = 5x60x60 + 30×60 = 20700
+//+5 hr 30 Mins Indian UTC = 5x60x60 + 30Ã—60 = 20700
 const long utcOffsetInSeconds = 19800;  //19080;  // 5.30= 5.5(60*60)
 
 
