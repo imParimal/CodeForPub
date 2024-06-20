@@ -17,18 +17,13 @@
 
 RTC_DS3231 rtc;
 LiquidCrystal_I2C lcd(0x27, 20, 4); //LiquidCrystal lcd(7, 6, 5, 4, 3, 2); // (rs, e, d4, d5, d6, d7)
-
-
-char t[32];
-
+WiFiUDP ntpUDP;
 
 const char *ssid = "STA";
 const char *password = "PASSWORD";
 
-
 //+5 hr 30 Mins Indian UTC = 5x60x60 + 30×60 = 20700
 const long utcOffsetInSeconds = 19800;  //19080;  // 5.30= 5.5(60*60)
-
 
 // You can specify the time server pool and the offset, (in seconds)
 // additionally you can specify the update interval (in milliseconds).
@@ -42,26 +37,23 @@ const long utcOffsetInSeconds = 19800;  //19080;  // 5.30= 5.5(60*60)
 //Update one in 12hr minimum require for reduce time error
 
 
-timeClient(ntpUDP, "asia.pool.ntp.org", utcOffsetInSeconds, 60000);  //pool.ntp.org
+  //pool.ntp.org
 //Weeks
 String Week[7] = { "Sun", "Mon", "Tue", "Wedn", "Thu", "Fri", "Sat" };
 //months
 String Month[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-WiFiUDP ntpUDP;
 
 
+NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", utcOffsetInSeconds);
 void setup() {
   //Serial Initialize
   Serial.begin(115200);
 
-
   //Wifi Initialize
   WiFi.begin(ssid, password);
 
-
   //lcd Initialize
   lcd.init();
-
 
   //RTC Initialize
   rtc.begin();
@@ -74,15 +66,11 @@ void setup() {
     return;
   }
 
-
   // Backlight On
   lcd.backlight();
   // Clear LCD
   lcd.clear();
   lcd.setCursor(0, 0);
-
-
-
 
   lcd.print("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
@@ -97,12 +85,9 @@ void setup() {
   unsigned long unix_epoch=timeClient.update();
   rtc.adjust(DateTime(unix_epoch));
 
-
   delay(1000);
   lcd.clear();
 }
-
-
 
 void loop() {
   //timeClient.update();
@@ -112,46 +97,36 @@ void loop() {
   Serial.print("Epoch Time: ");
   Serial.println(epochTime);
 
-
   String formattedTime = timeClient.getFormattedTime();
   Serial.print("Formatted Time: ");
   Serial.println(formattedTime);
-
 
   int currentHour = timeClient.getHours();
   Serial.print("Hour: ");
   Serial.println(currentHour);
 
-
   int currentMinute = timeClient.getMinutes();
   Serial.print("Minutes: ");
   Serial.println(currentMinute);
-
 
   int currentSecond = timeClient.getSeconds();
   Serial.print("Seconds: ");
   Serial.println(currentSecond);
 
-
   String weekDay = Week[timeClient.getDay()];
   Serial.print("Week Day: ");
   Serial.println(weekDay);
 
-
-
   //Get a time structure
   struct tm *ptm = gmtime((time_t *)&epochTime);
-
 
   int monthDay = ptm->tm_mday;
   Serial.print("Month day: ");
   Serial.println(monthDay);
 
-
   int currentMonth = ptm->tm_mon + 1;
   Serial.print("Month: ");
   Serial.println(currentMonth);
-
 
   String currentMonthName = Month[currentMonth - 1];
   Serial.print("Month name: ");
